@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Reportes</title>
+ <style>
+ body { font-family: Arial; padding: 20px; }
+ .card {
+ border: 1px solid #ccc;
+ padding: 15px;
+ margin-bottom: 15px;
+ border-radius: 10px;
+ box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+ }
+ .btn {
+ display: inline-block;
+ margin-top: 10px;
+ background: #0077b6;
+ color: white;
+ padding: 6px 12px;
+ border-radius: 5px;
+ text-decoration: none;
+ }
+ .btn:hover { background: #023e8a; }
+ </style>
+</head>
+<body>
+<h1>Reportes de Accidentes</h1>
+<div id="lista"></div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy } from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyCX0-b7mALIhPRbsdKakF9vyVkqv5O3dbc",
+  authDomain: "revista-moto-da54e.firebaseapp.com",
+  projectId: "revista-moto-da54e",
+  storageBucket: "revista-moto-da54e.firebasestorage.app",
+  messagingSenderId: "4110440800",
+  appId: "1:4110440800:web:46c91ae73b4be0097a6605",
+  measurementId: "G-3P0LQJH57D"
+};const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const lista = document.getElementById("lista");
+const q = query(collection(db, "Reportes"), orderBy("Fecha_Accidente", "desc"));
+const querySnapshot = await getDocs(q);
+querySnapshot.forEach((doc) => {
+ const data = doc.data();
+ const div = document.createElement("div");
+ div.className = "card";
+ div.innerHTML = `
+ <strong>Edad:</strong> ${data.Edad} <br>
+ <strong>Usa casco:</strong> ${data.Usa_Casco} <br>
+ <strong>Exceso de velocidad:</strong> ${data.Exceso_Velocidad} <br>
+ <strong>Tipo de incidente:</strong> ${data.Tipo_Incidente} <br>
+ <strong>Lesiones:</strong> ${data.Lesiones} <br>
+ <strong>Ubicación:</strong> ${data.Ubicación} <br>
+ <strong>Fecha del accidente:</strong> ${data.Fecha_Accidente || "No disponible"} <br>
+ <strong>Fecha de registro:</strong> ${
+ data.Fecha_Registro 
+ ? data.Fecha_Registro.toDate().toLocaleDateString() 
+ : "No disponible"
+ } <br>
+ ${
+ data.Link 
+ ? `<a href="${data.Link}" target="_blank" class="btn"> Ver evidencia</a>`
+ : `<span>❌ Sin evidencia</span>`
+ }
+ `;
+ lista.appendChild(div);
+});
+</script>
+</body>
+</html>
